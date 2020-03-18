@@ -6,7 +6,7 @@
 #include <glm.hpp>
 
 #include "Viewport.h"
-
+#include <gtc/matrix_access.hpp> 
 //-------------------------------------------------------------------------
 
 class Camera {
@@ -23,9 +23,9 @@ public:
 	void set2D();
 	void set3D();
 	
-	void pitch(GLdouble a); // rotates a degrees on the X axis
-	void yaw(GLdouble a);   // rotates a degrees on the Y axis
-	void roll(GLdouble a);  // rotates a degrees on the Z axis
+	//void pitch(GLdouble a); // rotates a degrees on the X axis
+	//void yaw(GLdouble a);   // rotates a degrees on the Y axis
+	//void roll(GLdouble a);  // rotates a degrees on the Z axis
 
 	// projection matrix
 	glm::dmat4 const& projMat() const { return mProjMat; };
@@ -38,8 +38,39 @@ public:
 	// transfers its viewport, the view matrix and projection matrix to the GPU
 	void upload() const { mViewPort->upload();  uploadVM(); uploadPM(); }; 
 
+#pragma region Implementación 1.2
+
+	void moveLR(GLdouble cs) {
+		mEye += mRight * cs;
+		mLook += mRight * cs;
+		setVM();
+	}//Left / Right
+	void moveFB(GLdouble cs) {
+		mEye += mFront * cs;
+		mLook += mFront* cs;
+		setVM();
+	} //Forward / Backward
+	void moveUD(GLdouble cs) {
+		mEye += mUpward * cs;
+		mLook += mUpward * cs;
+		setVM();
+	}//Up / Down
+	void setViewMat();
+#pragma endregion
+
 protected:
-	
+#pragma region Implementación1.2
+	glm::dvec3 mRight;
+	glm::dvec3 mUpward;
+	glm::dvec3 mFront;
+
+	void setAxes() {
+		mRight = row(mViewMat, 0);
+		mUpward = row(mViewMat, 1);
+		mFront = -row(mViewMat, 2);
+	}
+#pragma endregion
+
 	glm::dvec3 mEye = { 0.0, 0.0, 500.0 };  // camera's position
 	glm::dvec3 mLook = { 0.0, 0.0, 0.0 };   // target's position
 	glm::dvec3 mUp = { 0.0, 1.0, 0.0 };     // the up vector 

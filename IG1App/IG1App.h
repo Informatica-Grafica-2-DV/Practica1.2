@@ -14,8 +14,7 @@
 #include "Camera.h"
 #include "Scene.h"
 
-//-------------------------------------------------------------------------
-
+//---------------------------------------------------
 class IG1App
 {
 public:  
@@ -56,6 +55,9 @@ protected:
 	static void s_resize(int newWidth, int newHeight) { s_ig1app.resize(newWidth, newHeight); };
 	static void s_key(unsigned char key, int x, int y) { s_ig1app.key(key, x, y); };
 	static void s_specialKey(int key, int x, int y) { s_ig1app.specialKey(key, x, y); };
+	static void s_mouse(int button, int state, int x, int y) { s_ig1app.mouse(button, state, x, y); }
+	static void s_motion(int x, int y) { s_ig1app.motion(x, y); }
+	static void s_mouseWheel(int n, int d, int x, int y) { s_ig1app.mouseWheel(n, d, x, y); }
 
 	// Viewport position and size
 	Viewport *mViewPort = nullptr;
@@ -68,6 +70,39 @@ protected:
 	int mWinId = 0;	    // window's identifier
 	int mWinW = 800;    // window's width 
 	int mWinH = 600;    // window's height
+
+#pragma region Implementacion1.2
+	dvec2 mMouseCoord;
+	int mMouseButt;
+	void mouse(int button, int state, int x, int y) {
+		mMouseButt = button;
+		mMouseCoord = dvec2(x, mWinH - y);
+	}
+	void motion(int x, int y) {
+		if (mMouseButt == GLUT_RIGHT_BUTTON) {
+			dvec2 newCoord = mMouseCoord; // Capturamos las coordenadas anteriores
+			mMouseCoord = dvec2(x, mWinH - y); //Se guarda la posición actual
+			newCoord = mMouseCoord - newCoord;
+
+			mCamera->setViewMat(); //Setea la matriz inversa para la visa como los vectores de vista de los ejes, sin esto no funciona
+
+			//Mueve la cámara en los ejes X, Y
+			mCamera->moveLR(-newCoord.x);
+			mCamera->moveUD(-newCoord.y);
+
+			glutPostRedisplay();
+		}
+	}
+	void mouseWheel(int whellNumber, int direction, int x, int y) {
+		int m = glutGetModifiers();
+		if (m == 0) {
+			mCamera->setViewMat();
+			
+			mCamera->moveFB(10);
+		}
+	}
+#pragma endregion
+
 };
 //-------------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 
 #include <gtc/matrix_transform.hpp>  
 #include <gtc/type_ptr.hpp>
-//#include <gtc/matrix_access.hpp>
+#include <gtc/matrix_access.hpp>
 
 using namespace glm;
 
@@ -16,7 +16,13 @@ Camera::Camera(Viewport* vp): mViewPort(vp), mViewMat(1.0), mProjMat(1.0),
 }
 //-------------------------------------------------------------------------
 
-void Camera::uploadVM() const 
+void Camera::setViewMat()
+{
+	mViewMat = lookAt(mEye, mLook, mUp); //Matriz inversa
+	setAxes(); //Inicializa los ejes (Izquierda/Derecha, Arriba/Abajo, Delante/Detrás)
+}
+
+void Camera::uploadVM() const
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(value_ptr(mViewMat)); // transfers view matrix to the GPU 
@@ -47,26 +53,26 @@ void Camera::set3D()
 }
 //-------------------------------------------------------------------------
 
-void Camera::pitch(GLdouble a) 
-{  
-	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(1.0, 0, 0));
-	// glm::rotate returns mViewMat * rotationMatrix
-}
-//-------------------------------------------------------------------------
-
-void Camera::yaw(GLdouble a) 
-{
-	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(0, 1.0, 0));
-	// glm::rotate returns mViewMat * rotationMatrix
-}
-//-------------------------------------------------------------------------
-
-void Camera::roll(GLdouble a) 
-{
-	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(0, 0, 1.0));
-	// glm::rotate returns mViewMat * rotationMatrix
-}
-//-------------------------------------------------------------------------
+//void Camera::pitch(GLdouble a) 
+//{  
+//	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(1.0, 0, 0));
+//	// glm::rotate returns mViewMat * rotationMatrix
+//}
+////-------------------------------------------------------------------------
+//
+//void Camera::yaw(GLdouble a) 
+//{
+//	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(0, 1.0, 0));
+//	// glm::rotate returns mViewMat * rotationMatrix
+//}
+////-------------------------------------------------------------------------
+//
+//void Camera::roll(GLdouble a) 
+//{
+//	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(0, 0, 1.0));
+//	// glm::rotate returns mViewMat * rotationMatrix
+//}
+////-------------------------------------------------------------------------
 
 void Camera::setSize(GLdouble xw, GLdouble yh) 
 {

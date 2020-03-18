@@ -1,17 +1,5 @@
-﻿  Camera.cpp
-  Entity.cpp
-F:\Segundo\Cuatri2\IG\Practica1.2\IG1App\Entity.cpp(206,52): warning C4244: 'argumento': conversión de 'GLdouble' a 'GLuint'; posible pérdida de datos
-F:\Segundo\Cuatri2\IG\Practica1.2\IG1App\Entity.cpp(206,47): warning C4244: 'argumento': conversión de 'GLdouble' a 'GLuint'; posible pérdida de datos
-  IG1App.cpp
-  main.cpp
-  Mesh.cpp
-F:\Segundo\Cuatri2\IG\Practica1.2\IG1App\Mesh.cpp(82,23): warning C4018: '<': no coinciden signed/unsigned
-F:\Segundo\Cuatri2\IG\Practica1.2\IG1App\Mesh.cpp(103,23): warning C4018: '<': no coinciden signed/unsigned
-F:\Segundo\Cuatri2\IG\Practica1.2\IG1App\Mesh.cpp(175,23): warning C4018: '<': no coinciden signed/unsigned
-  Pixmap32RGBA.cpp
-  Resources.cpp
-  Scene.cpp
+﻿  IG1App.cpp
   Texture.cpp
-  Viewport.cpp
+  main.cpp
   Generando código...
   IG1App.vcxproj -> F:\Segundo\Cuatri2\IG\Practica1.2\bin\IG1AppDebug.exe
