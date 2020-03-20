@@ -74,31 +74,22 @@ protected:
 #pragma region Implementacion1.2
 	dvec2 mMouseCoord;
 	int mMouseButt;
-	void mouse(int button, int state, int x, int y) {
-		mMouseButt = button;
-		mMouseCoord = dvec2(x, mWinH - y);
-	}
-	void motion(int x, int y) {
-		if (mMouseButt == GLUT_RIGHT_BUTTON) {
-			dvec2 newCoord = mMouseCoord; // Capturamos las coordenadas anteriores
-			mMouseCoord = dvec2(x, mWinH - y); //Se guarda la posición actual
-			newCoord = mMouseCoord - newCoord;
-
-			mCamera->setViewMat(); //Setea la matriz inversa para la visa como los vectores de vista de los ejes, sin esto no funciona
-
-			//Mueve la cámara en los ejes X, Y
-			mCamera->moveLR(-newCoord.x);
-			mCamera->moveUD(-newCoord.y);
-
+	void mouse(int button, int state, int x, int y);
+	void motion(int x, int y);
+	void mouseWheel(int whellNumber, int direction, int x, int y) {
+		/*Podemos preguntar si está pulsada alguna de las teclas :
+		GLUT_ACTIVE_CTRL / _ALT / _SHIFT*/
+		int m = glutGetModifiers();
+		if (m == 0) // ninguna está presionada
+		{
+			//Aleja y acerca la cámara
+			mCamera->moveFB(direction);
 			glutPostRedisplay();
 		}
-	}
-	void mouseWheel(int whellNumber, int direction, int x, int y) {
-		int m = glutGetModifiers();
-		if (m == 0) {
-			mCamera->setViewMat();
-			
-			mCamera->moveFB(10);
+		else if (m == GLUT_ACTIVE_CTRL) {
+			//Escala la escena
+			mCamera->setScale(direction * 0.1);
+			glutPostRedisplay();
 		}
 	}
 #pragma endregion

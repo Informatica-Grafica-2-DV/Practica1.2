@@ -193,6 +193,27 @@ void IG1App::specialKey(int key, int x, int y)
 	if (need_redisplay)
 		glutPostRedisplay(); // marks the window as needing to be redisplayed -> calls to display()
 }
+void IG1App::mouse(int button, int state, int x, int y)
+{
+	mMouseButt = button;
+	mMouseCoord = dvec2(x, mWinH - y);
+}
+void IG1App::motion(int x, int y) {
+	dvec2 newCoord = mMouseCoord; // Guardamos la coordenada previa del ratón
+	mMouseCoord = dvec2(x, mWinH - y); // Asignamos la nueva
+	newCoord = mMouseCoord - newCoord; // Calculamos el desplazamiento realizado
+	if (mMouseButt == GLUT_RIGHT_BUTTON) {
+		//Mueve la cámara en los ejes X, Y
+		mCamera->moveLR(-newCoord.x);
+		mCamera->moveUD(-newCoord.y);
+
+		glutPostRedisplay();
+	}
+	else if (mMouseButt == GLUT_LEFT_BUTTON) {
+		mCamera->orbit(newCoord.x * 0.1, newCoord.y * 2); // Órbitaalrededor de mLook. La multiplicación es la sensibilidad
+		glutPostRedisplay();
+	}
+}
 //-------------------------------------------------------------------------
 int IG1App::getWinWidth()
 {

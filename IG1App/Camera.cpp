@@ -16,12 +16,6 @@ Camera::Camera(Viewport* vp): mViewPort(vp), mViewMat(1.0), mProjMat(1.0),
 }
 //-------------------------------------------------------------------------
 
-void Camera::setViewMat()
-{
-	mViewMat = lookAt(mEye, mLook, mUp); //Matriz inversa
-	setAxes(); //Inicializa los ejes (Izquierda/Derecha, Arriba/Abajo, Delante/Detrás)
-}
-
 void Camera::uploadVM() const
 {
 	glMatrixMode(GL_MODELVIEW);
@@ -32,6 +26,14 @@ void Camera::uploadVM() const
 void Camera::setVM() 
 {
 	mViewMat = lookAt(mEye, mLook, mUp);  // glm::lookAt defines the view matrix 
+	setAxes(); //Inicializa los ejes (Izquierda/Derecha, Arriba/Abajo, Delante/Detrás)
+}
+void Camera::orbit(GLdouble incAng, GLdouble incY) {
+	setVM();
+	mAng += incAng;
+	mEye.z = mLook.x + cos(radians(mAng)) * mRadio;
+	mEye.x = mLook.z - sin(radians(mAng)) * mRadio;
+	mEye.y -= incY;
 }
 //-------------------------------------------------------------------------
 
@@ -86,9 +88,9 @@ void Camera::setSize(GLdouble xw, GLdouble yh)
 
 void Camera::setScale(GLdouble s) 
 {
+	setPM();
 	mScaleFact -= s;
 	if (mScaleFact < 0) mScaleFact = 0.01;
-	setPM();
 }
 //-------------------------------------------------------------------------
 

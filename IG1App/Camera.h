@@ -41,21 +41,26 @@ public:
 #pragma region Implementación 1.2
 
 	void moveLR(GLdouble cs) {
+		setVM();
 		mEye += mRight * cs;
 		mLook += mRight * cs;
-		setVM();
 	}//Left / Right
 	void moveFB(GLdouble cs) {
+		setVM();	
 		mEye += mFront * cs;
 		mLook += mFront* cs;
-		setVM();
 	} //Forward / Backward
 	void moveUD(GLdouble cs) {
+		setVM();
 		mEye += mUpward * cs;
 		mLook += mUpward * cs;
-		setVM();
 	}//Up / Down
-	void setViewMat();
+
+	glm::dvec3 getmLook() { return mLook; }
+
+	void setVM();
+
+	void orbit(GLdouble incAng, GLdouble incY);
 #pragma endregion
 
 protected:
@@ -64,6 +69,8 @@ protected:
 	glm::dvec3 mUpward;
 	glm::dvec3 mFront;
 
+	GLdouble mAng = 0;
+	GLdouble mRadio = 1000;
 	void setAxes() {
 		mRight = row(mViewMat, 0);
 		mUpward = row(mViewMat, 1);
@@ -88,7 +95,6 @@ protected:
 
 	Viewport* mViewPort;   // the viewport
 
-	void setVM();
 	void setPM();
 };
 //-------------------------------------------------------------------------
