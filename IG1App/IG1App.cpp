@@ -214,6 +214,23 @@ void IG1App::motion(int x, int y) {
 		glutPostRedisplay();
 	}
 }
+void IG1App::mouseWheel(int whellNumber, int direction, int x, int y)
+{
+	/*Podemos preguntar si está pulsada alguna de las teclas :
+	GLUT_ACTIVE_CTRL / _ALT / _SHIFT*/
+	int m = glutGetModifiers();
+	if (m == 0) // ninguna está presionada
+	{
+		//Aleja y acerca la cámara
+		mCamera->moveFB(direction);
+		glutPostRedisplay();
+	}
+	else if (m == GLUT_ACTIVE_CTRL) {
+		//Escala la escena
+		mCamera->setScale(direction * 0.1);
+		glutPostRedisplay();
+	}
+}
 //-------------------------------------------------------------------------
 int IG1App::getWinWidth()
 {
