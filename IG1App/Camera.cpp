@@ -23,7 +23,28 @@ void Camera::uploadVM() const
 }
 //-------------------------------------------------------------------------
 
-void Camera::setVM() 
+void Camera::moveLR(GLdouble cs)
+{
+	setVM();
+	mEye += mRight * cs;
+	mLook += mRight * cs;
+}
+
+void Camera::moveFB(GLdouble cs)
+{
+	setVM();
+	mEye += mFront * cs;
+	mLook += mFront * cs;
+}
+
+void Camera::moveUD(GLdouble cs)
+{
+	setVM();
+	mEye += mUpward * cs;
+	mLook += mUpward * cs;
+}
+
+void Camera::setVM()
 {
 	mViewMat = lookAt(mEye, mLook, mUp);  // glm::lookAt defines the view matrix 
 	setAxes(); //Inicializa los ejes (Izquierda/Derecha, Arriba/Abajo, Delante/Detrás)
@@ -35,23 +56,30 @@ void Camera::orbit(GLdouble incAng, GLdouble incY) {
 	mEye.x = mLook.z - sin(radians(mAng)) * mRadio;
 	mEye.y -= incY;
 }
+void Camera::changePrj()
+{
+	bOrto = !bOrto;
+	setPM();
+}
 //-------------------------------------------------------------------------
 
 void Camera::set2D() 
 {
-	mEye = dvec3(0, 0, 500);
-	mLook = dvec3(0, 0, 0);
-	mUp = dvec3(0, 1, 0);
 	setVM();
+	mLook = dvec3(0, 0, 0);
+	mEye = dvec3(0, 0, mRadio);
+	mAng = 270; //Eje Z positivo
+	mUp = dvec3(0, 1, 0);
 }
 //-------------------------------------------------------------------------
 
 void Camera::set3D() 
 {
-	mEye = dvec3(500, 500, 500);  
-	mLook = dvec3(0, 10, 0);   
-	mUp = dvec3(0, 1, 0);
 	setVM();
+	mLook = dvec3(0, 10, 0);   
+	mEye = dvec3(mRadio, mRadio, mRadio);
+	mAng = 315; //Eje Z y EjeX positivos
+	mUp = dvec3(0, 1, 0);
 }
 //-------------------------------------------------------------------------
 
@@ -99,6 +127,19 @@ void Camera::setPM()
 	if (bOrto) { //  if orthogonal projection
 		mProjMat = ortho(xLeft*mScaleFact, xRight*mScaleFact, yBot*mScaleFact, yTop*mScaleFact, mNearVal, mFarVal);
 		// glm::ortho defines the orthogonal projection matrix
+	}
+	else {
+		/*
+		Top = Near . tan(Fovy / 2.0)
+		Bot = -Top
+		Right = Top . AspectRatio
+		Left = -Right
+		*/
+		GLdouble fovy = atan(yTop / mNearVal) * 2.0;
+		GLdouble mNear = yTop / tan(fovy / 2.0);
+		GLdouble bot = -yTop;
+		GLdouble left = -xRight;
+		mProjMat = frustum(left * 0.005, xRight * 0.005, bot * 0.005, yTop * 0.005, mNear, mFarVal);
 	}
 }
 //-------------------------------------------------------------------------

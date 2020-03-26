@@ -40,27 +40,19 @@ public:
 
 #pragma region Implementación 1.2
 
-	void moveLR(GLdouble cs) {
-		setVM();
-		mEye += mRight * cs;
-		mLook += mRight * cs;
-	}//Left / Right
-	void moveFB(GLdouble cs) {
-		setVM();	
-		mEye += mFront * cs;
-		mLook += mFront* cs;
-	} //Forward / Backward
-	void moveUD(GLdouble cs) {
-		setVM();
-		mEye += mUpward * cs;
-		mLook += mUpward * cs;
-	}//Up / Down
+	void moveLR(GLdouble cs);//Left / Right
+	void moveFB(GLdouble cs); //Forward / Backward
+	void moveUD(GLdouble cs); //Up / Down
 
 	glm::dvec3 getmLook() { return mLook; }
 
 	void setVM();
 
 	void orbit(GLdouble incAng, GLdouble incY);
+
+	void changePrj();
+
+	bool getbOrto() { return bOrto; }
 #pragma endregion
 
 protected:

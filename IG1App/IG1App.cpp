@@ -151,6 +151,9 @@ void IG1App::key(unsigned char key, int x, int y)
 			mScene->setState(0);
 			mScene->init();
 		}		break;
+	case 'p':
+		mCamera->changePrj();
+		break;
 	default:
 		need_redisplay = false;
 		break;
@@ -222,11 +225,12 @@ void IG1App::mouseWheel(int whellNumber, int direction, int x, int y)
 	if (m == 0) // ninguna está presionada
 	{
 		//Aleja y acerca la cámara
-		mCamera->moveFB(direction);
+		int movement = direction * 5.0;
+		mCamera->moveFB(movement);
 		glutPostRedisplay();
 	}
-	else if (m == GLUT_ACTIVE_CTRL) {
-		//Escala la escena
+	else if (m == GLUT_ACTIVE_CTRL && mCamera->getbOrto()) {
+		//Escala la escena solo si está en ortogonal
 		mCamera->setScale(direction * 0.1);
 		glutPostRedisplay();
 	}
