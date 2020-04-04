@@ -38,37 +38,26 @@ public:
 	// transfers its viewport, the view matrix and projection matrix to the GPU
 	void upload() const { mViewPort->upload();  uploadVM(); uploadPM(); }; 
 
-#pragma region Implementación 1.2
-
-	void moveLR(GLdouble cs);//Left / Right
-	void moveFB(GLdouble cs); //Forward / Backward
-	void moveUD(GLdouble cs); //Up / Down
-
-	glm::dvec3 getmLook() { return mLook; }
-
-	void setVM();
-
-	void orbit(GLdouble incAng, GLdouble incY);
-
-	void changePrj();
-
-	bool getbOrto() { return bOrto; }
-#pragma endregion
+	#pragma region Implementación 1.2
+	void moveLR(GLdouble cs);					//Left / Right
+	void moveFB(GLdouble cs);					//Forward / Backward
+	void moveUD(GLdouble cs);					//Up / Down
+	void setVM();								//Inicializa el viewMat
+	void orbit(GLdouble incAng, GLdouble incY); //Método para orbitar la cámara
+	void changePrj();							//Cambia entre ortogonal y perspectiva
+	void setCenital();							//Pone la cámara en vista cenital
+	#pragma endregion
 
 protected:
-#pragma region Implementación1.2
-	glm::dvec3 mRight;
-	glm::dvec3 mUpward;
-	glm::dvec3 mFront;
+	#pragma region Implementación1.2
+	glm::dvec3 mRight;		//Modificadores de la vista en el eje X
+	glm::dvec3 mUpward;		//Modificadores de la vista en el eje Y
+	glm::dvec3 mFront;		//Modificadores de la vista en el eje Z
 
-	GLdouble mAng = 0;
-	GLdouble mRadio = 1000;
-	void setAxes() {
-		mRight = row(mViewMat, 0);
-		mUpward = row(mViewMat, 1);
-		mFront = -row(mViewMat, 2);
-	}
-#pragma endregion
+	GLdouble mAng = 0;		//Ángulo para orbitar
+	GLdouble mRadio = 1000; //Radio de la circunferencia para orbitar
+	void setAxes();			//Inicializa mRight, mUpward y mFront
+	#pragma endregion
 
 	glm::dvec3 mEye = { 0.0, 0.0, 500.0 };  // camera's position
 	glm::dvec3 mLook = { 0.0, 0.0, 0.0 };   // target's position

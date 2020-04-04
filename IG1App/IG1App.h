@@ -46,6 +46,7 @@ protected:
 	void free();   
  
 	void display() const;   // the scene
+	void display2Vistas() const;
 	void resize(int newWidth, int newHeight);   // the viewport (without changing the scale) 
 	void key(unsigned char key, int x, int y);  // keypress event
 	void specialKey(int key, int x, int y);     // keypress event for special characters
@@ -77,7 +78,8 @@ protected:
 	void mouse(int button, int state, int x, int y);
 	void motion(int x, int y);
 	void mouseWheel(int whellNumber, int direction, int x, int y);
-#pragma endregion
+	bool m2Vistas = false;
+	#pragma endregion
 };
 //-------------------------------------------------------------------------
 

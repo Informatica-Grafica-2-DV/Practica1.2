@@ -16,6 +16,13 @@ Camera::Camera(Viewport* vp): mViewPort(vp), mViewMat(1.0), mProjMat(1.0),
 }
 //-------------------------------------------------------------------------
 
+void Camera::setAxes()
+{
+	mRight = row(mViewMat, 0);
+	mUpward = row(mViewMat, 1);
+	mFront = -row(mViewMat, 2);
+}
+
 void Camera::uploadVM() const
 {
 	glMatrixMode(GL_MODELVIEW);
@@ -61,25 +68,33 @@ void Camera::changePrj()
 	bOrto = !bOrto;
 	setPM();
 }
+void Camera::setCenital()
+{
+	mLook = dvec3(0, 0, 0);
+	mEye = dvec3(0, mRadio, 0);
+	mAng = 90;
+	mUp = dvec3(0, 0, 1);
+	setVM();
+}
 //-------------------------------------------------------------------------
 
 void Camera::set2D() 
 {
-	setVM();
 	mLook = dvec3(0, 0, 0);
 	mEye = dvec3(0, 0, mRadio);
-	mAng = 270; //Eje Z positivo
+	mAng = 0;
 	mUp = dvec3(0, 1, 0);
+	setVM();
 }
 //-------------------------------------------------------------------------
 
 void Camera::set3D() 
 {
-	setVM();
 	mLook = dvec3(0, 10, 0);   
 	mEye = dvec3(mRadio, mRadio, mRadio);
 	mAng = 315; //Eje Z y EjeX positivos
 	mUp = dvec3(0, 1, 0);
+	setVM();
 }
 //-------------------------------------------------------------------------
 
@@ -114,11 +129,13 @@ void Camera::setSize(GLdouble xw, GLdouble yh)
 }
 //-------------------------------------------------------------------------
 
-void Camera::setScale(GLdouble s) 
+void Camera::setScale(GLdouble s)
 {
-	setPM();
-	mScaleFact -= s;
-	if (mScaleFact < 0) mScaleFact = 0.01;
+	if (bOrto) { //Solo escala en ortogonal
+		setPM();
+		mScaleFact -= s;
+		if (mScaleFact < 0) mScaleFact = 0.01;
+	}
 }
 //-------------------------------------------------------------------------
 
@@ -129,17 +146,15 @@ void Camera::setPM()
 		// glm::ortho defines the orthogonal projection matrix
 	}
 	else {
-		/*
-		Top = Near . tan(Fovy / 2.0)
-		Bot = -Top
-		Right = Top . AspectRatio
-		Left = -Right
-		*/
-		GLdouble fovy = atan(yTop / mNearVal) * 2.0;
-		GLdouble mNear = yTop / tan(fovy / 2.0);
-		GLdouble bot = -yTop;
-		GLdouble left = -xRight;
-		mProjMat = frustum(left * 0.005, xRight * 0.005, bot * 0.005, yTop * 0.005, mNear, mFarVal);
+		/* Top = Near . tan(Fovy / 2.0)
+			Bot = -Top
+			Right = Top . AspectRatio
+			Left = -Right */
+		GLdouble fovy = atan((yTop / 2) / mNearVal) * 2.0;
+		GLdouble mNear = (yTop / 2) / tan(fovy / 2.0);
+		GLdouble auxScaleFact = 0.001;
+		mProjMat = frustum(xLeft * auxScaleFact, xRight * auxScaleFact, yBot * auxScaleFact, yTop * auxScaleFact, mNear, mFarVal);
+		//mProjMat = glm::perspective(fovy, aspectRadio, mNearVal, mFarVal);
 	}
 }
 //-------------------------------------------------------------------------

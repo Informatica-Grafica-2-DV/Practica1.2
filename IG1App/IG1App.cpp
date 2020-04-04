@@ -1,4 +1,4 @@
-
+ï»¿
 #include "IG1App.h"
 #include "CheckML.h"
 #include <iostream>
@@ -91,16 +91,39 @@ void IG1App::free()
 }
 //-------------------------------------------------------------------------
 
-void IG1App::display() const   
-{  // double buffering
+void IG1App::display() const {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (m2Vistas) display2Vistas();
+	else mScene->render(*mCamera);  // uploads the viewport and camera to the GPU
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clears the back buffer
-
-	mScene->render(*mCamera);  // uploads the viewport and camera to the GPU
-	
-	glutSwapBuffers();	// swaps the front and back buffer
+	glutSwapBuffers();
 }
-//-------------------------------------------------------------------------
+
+void IG1App::display2Vistas() const
+{
+	//Copiamos la cÃ¡mara en una variable auxiliar que comparte puntero
+	Camera auxCam = *mCamera;
+
+	// Se comparte puerto de vista, asÃ­ que se guarda en un auxiliar
+	Viewport auxVP = *mViewPort;
+
+	// Se divide la ventana en dos
+	mViewPort->setSize(mWinW / 2, mWinH);
+
+	// Se cambia el tamaÃ±o de la ventana vista desde la cÃ¡mara
+	auxCam.setSize(mViewPort->width(), mViewPort->height());
+
+	// vista Usuario
+	mViewPort->setPos(0, 0);
+	mScene->render(auxCam);
+
+	// vista Cenital
+	mViewPort->setPos(mWinW / 2, 0);
+	auxCam.setCenital();
+	mScene->render(auxCam);
+
+	*mViewPort = auxVP; // restaurar el puerto de vista ïƒ  NOTA
+}
 
 void IG1App::resize(int newWidth, int newHeight) 
 {
@@ -154,6 +177,9 @@ void IG1App::key(unsigned char key, int x, int y)
 	case 'p':
 		mCamera->changePrj();
 		break;
+	case 'k':
+		m2Vistas = !m2Vistas;
+		break;
 	default:
 		need_redisplay = false;
 		break;
@@ -196,41 +222,42 @@ void IG1App::specialKey(int key, int x, int y)
 	if (need_redisplay)
 		glutPostRedisplay(); // marks the window as needing to be redisplayed -> calls to display()
 }
+
 void IG1App::mouse(int button, int state, int x, int y)
 {
 	mMouseButt = button;
 	mMouseCoord = dvec2(x, mWinH - y);
 }
 void IG1App::motion(int x, int y) {
-	dvec2 newCoord = mMouseCoord; // Guardamos la coordenada previa del ratón
+	dvec2 newCoord = mMouseCoord; // Guardamos la coordenada previa del ratÃ³n
 	mMouseCoord = dvec2(x, mWinH - y); // Asignamos la nueva
 	newCoord = mMouseCoord - newCoord; // Calculamos el desplazamiento realizado
 	if (mMouseButt == GLUT_RIGHT_BUTTON) {
-		//Mueve la cámara en los ejes X, Y
+		//Mueve la cÃ¡mara en los ejes X, Y
 		mCamera->moveLR(-newCoord.x);
 		mCamera->moveUD(-newCoord.y);
 
 		glutPostRedisplay();
 	}
 	else if (mMouseButt == GLUT_LEFT_BUTTON) {
-		mCamera->orbit(newCoord.x * 0.1, newCoord.y * 2); // Órbitaalrededor de mLook. La multiplicación es la sensibilidad
+		mCamera->orbit(newCoord.x * 0.1, newCoord.y * 2); // Ã“rbita alrededor de mLook. La multiplicaciÃ³n es la sensibilidad
 		glutPostRedisplay();
 	}
 }
 void IG1App::mouseWheel(int whellNumber, int direction, int x, int y)
 {
-	/*Podemos preguntar si está pulsada alguna de las teclas :
+	/*Podemos preguntar si estÃ¡ pulsada alguna de las teclas :
 	GLUT_ACTIVE_CTRL / _ALT / _SHIFT*/
 	int m = glutGetModifiers();
-	if (m == 0) // ninguna está presionada
+	if (m == 0) // ninguna estÃ¡ presionada
 	{
-		//Aleja y acerca la cámara
+		//Aleja y acerca la cÃ¡mara
 		int movement = direction * 5.0;
 		mCamera->moveFB(movement);
 		glutPostRedisplay();
 	}
-	else if (m == GLUT_ACTIVE_CTRL && mCamera->getbOrto()) {
-		//Escala la escena solo si está en ortogonal
+	else if (m == GLUT_ACTIVE_CTRL) {
+		//Escala la escena
 		mCamera->setScale(direction * 0.1);
 		glutPostRedisplay();
 	}
