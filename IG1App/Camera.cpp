@@ -146,15 +146,8 @@ void Camera::setPM()
 		// glm::ortho defines the orthogonal projection matrix
 	}
 	else {
-		/* Top = Near . tan(Fovy / 2.0)
-			Bot = -Top
-			Right = Top . AspectRatio
-			Left = -Right */
-		GLdouble fovy = atan((yTop / 2) / mNearVal) * 2.0;
-		GLdouble mNear = (yTop / 2) / tan(fovy / 2.0);
-		GLdouble auxScaleFact = 0.001;
-		mProjMat = frustum(xLeft * auxScaleFact, xRight * auxScaleFact, yBot * auxScaleFact, yTop * auxScaleFact, mNear, mFarVal);
-		//mProjMat = glm::perspective(fovy, aspectRadio, mNearVal, mFarVal);
+		//Se supone un fovy = 90 grados por lo que Near = yTop
+		mProjMat = frustum(xLeft * mScaleFact, xRight * mScaleFact, yBot * mScaleFact, yTop * mScaleFact, yTop, mFarVal);
 	}
 }
 //-------------------------------------------------------------------------
