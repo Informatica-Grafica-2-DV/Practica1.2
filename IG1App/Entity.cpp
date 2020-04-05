@@ -302,6 +302,11 @@ Cristal::Cristal(GLdouble w, GLdouble h) : w_(w), h_(h)
 	transform = dmat4(1);
 }
 
+Cristal::~Cristal()
+{
+	delete mMesh;
+}
+
 void Cristal::render(glm::dmat4 const& modelViewMat) const
 {
 	if (mMesh != nullptr) {

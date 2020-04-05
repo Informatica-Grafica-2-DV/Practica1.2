@@ -176,6 +176,7 @@ private:
 
 public:
 	Cristal(GLdouble w, GLdouble h);
+	~Cristal();
 	virtual void render(glm::dmat4 const& modelViewMat) const;
 	virtual void update() {}
 };
